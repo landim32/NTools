@@ -25,7 +25,6 @@ COPY ["NTools.Application/NTools.Application.csproj", "NTools.Application/"]
 COPY ["NTools.Domain/NTools.Domain.csproj", "NTools.Domain/"]
 COPY ["Core.Domain/Core.Domain.csproj", "Core.Domain/"]
 COPY ["NTools.DTO/NTools.DTO.csproj", "NTools.DTO/"]
-COPY ["DB.Infra/DB.Infra.csproj", "DB.Infra/"]
 RUN dotnet restore "NTools.API/NTools.API.csproj"
 COPY . .
 WORKDIR "/src/NTools.API"

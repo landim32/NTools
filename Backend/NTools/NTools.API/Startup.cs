@@ -36,6 +36,7 @@ namespace NTools.API
         {
             services.Configure<MailerSendSetting>(Configuration.GetSection("MailerSend"));
             services.Configure<NAuthSetting>(Configuration.GetSection("NTools"));
+            services.Configure<S3Setting>(Configuration.GetSection("S3"));
 
             Initializer.Configure(services, Configuration.GetConnectionString("NAuthContext"));
 

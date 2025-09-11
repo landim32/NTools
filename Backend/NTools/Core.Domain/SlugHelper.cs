@@ -10,7 +10,7 @@ namespace Core.Domain
 {
     public static class SlugHelper
     {
-        public static string GerarSlug(string texto)
+        public static string GenerateSlug(string texto)
         {
             if (string.IsNullOrWhiteSpace(texto))
                 return string.Empty;

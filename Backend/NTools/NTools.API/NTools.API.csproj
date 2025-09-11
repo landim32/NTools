@@ -23,13 +23,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
     <ProjectReference Include="..\NTools.Application\NTools.Application.csproj" />
-    <ProjectReference Include="..\NTools.Client\NTools.Client.csproj" />
+    <ProjectReference Include="..\NTools.ACL\NTools.ACL.csproj" />
     <ProjectReference Include="..\NTools.Domain\NTools.Domain.csproj" />
     <ProjectReference Include="..\NTools.DTO\NTools.DTO.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Controllers\OriginalController.cs" />
   </ItemGroup>
 
   <ItemGroup>

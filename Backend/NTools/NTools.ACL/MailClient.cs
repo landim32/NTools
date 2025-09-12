@@ -18,7 +18,7 @@ namespace NTools.ACL
         {
         }
 
-        public async Task<bool> IsValidEmail(string email)
+        public async Task<bool> IsValidEmailAsync(string email)
         {
             var response = await _httpClient.GetAsync($"{_ntoolSetting.Value.ApiUrl}/Mail/isValidEmail/{email}");
             response.EnsureSuccessStatusCode();

@@ -10,6 +10,6 @@ namespace NTools.ACL.Interfaces
     public interface IMailClient
     {
         Task<bool> SendmailAsync(MailerInfo mail);
-        Task<bool> IsValidEmail(string email);
+        Task<bool> IsValidEmailAsync(string email);
     }
 }

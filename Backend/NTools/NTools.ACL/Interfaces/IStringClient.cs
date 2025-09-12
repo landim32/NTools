@@ -8,8 +8,8 @@ namespace NTools.ACL.Interfaces
 {
     public interface IStringClient
     {
-        Task<string> GenerateSlug(string name);
-        Task<string> OnlyNumbers(string input);
-        Task<string> GenerateShortUniqueString();
+        Task<string> GenerateSlugAsync(string name);
+        Task<string> OnlyNumbersAsync(string input);
+        Task<string> GenerateShortUniqueStringAsync();
     }
 }

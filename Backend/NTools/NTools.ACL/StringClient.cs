@@ -16,21 +16,21 @@ namespace NTools.ACL
         {
         }
 
-        public async Task<string> GenerateShortUniqueString()
+        public async Task<string> GenerateShortUniqueStringAsync()
         {
             var response = await _httpClient.GetAsync($"{_ntoolSetting.Value.ApiUrl}/String/generateShortUniqueString");
             response.EnsureSuccessStatusCode();
             return GetStringFromJson(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<string> GenerateSlug(string name)
+        public async Task<string> GenerateSlugAsync(string name)
         {
             var response = await _httpClient.GetAsync($"{_ntoolSetting.Value.ApiUrl}/String/generateSlug");
             response.EnsureSuccessStatusCode();
             return GetStringFromJson(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<string> OnlyNumbers(string input)
+        public async Task<string> OnlyNumbersAsync(string input)
         {
             var response = await _httpClient.GetAsync($"{_ntoolSetting.Value.ApiUrl}/String/onlyNumbers");
             response.EnsureSuccessStatusCode();

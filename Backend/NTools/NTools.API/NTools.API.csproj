@@ -27,8 +27,4 @@
     <ProjectReference Include="..\NTools.Domain\NTools.Domain.csproj" />
     <ProjectReference Include="..\NTools.DTO\NTools.DTO.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="emagine.pfx" />
-  </ItemGroup>
 </Project>

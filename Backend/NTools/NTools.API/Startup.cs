@@ -54,10 +54,12 @@ namespace NTools.API
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+            /*
             services.AddHttpsRedirection(options =>
             {
                 options.HttpsPort = 443;
             });
+            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,10 +77,12 @@ namespace NTools.API
                     //c.RoutePrefix = string.Empty;
                 });
             }
+            /*
             else
             {
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
             }
+            */
 
 
             app.UseHealthChecks("/",

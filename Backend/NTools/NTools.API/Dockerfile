@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 ENV ASPNETCORE_ENVIRONMENT=Docker
 WORKDIR /app
-EXPOSE 443
+EXPOSE 80
 
 # Build libgdiplus with pango
 RUN apt-get update && apt-get install  -y --allow-unauthenticated \
@@ -19,7 +19,7 @@ RUN make install
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["NTools.API/emagine.pfx", "NTools.API/"]
+#COPY ["NTools.API/emagine.pfx", "NTools.API/"]
 COPY ["NTools.API/NTools.API.csproj", "NTools.API/"]
 COPY ["NTools.Application/NTools.Application.csproj", "NTools.Application/"]
 COPY ["NTools.Domain/NTools.Domain.csproj", "NTools.Domain/"]

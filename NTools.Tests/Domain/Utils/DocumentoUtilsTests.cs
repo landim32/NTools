@@ -291,17 +291,17 @@ namespace NTools.Tests.Domain.Utils
         #region Real-World Examples
 
         [Theory]
-        [InlineData("12345678909", true, "Valid CPF")]
-        [InlineData("111.444.777-35", true, "Valid CPF with formatting")]
-        [InlineData("11222333000181", true, "Valid CNPJ")]
-        [InlineData("11.222.333/0001-81", true, "Valid CNPJ with formatting")]
-        [InlineData("12345678900", false, "Invalid CPF")]
-        [InlineData("11111111111", false, "CPF with repeated digits")]
-        [InlineData("11222333000180", false, "Invalid CNPJ")]
-        [InlineData("00000000000000", false, "CNPJ with repeated digits")]
-        [InlineData("", false, "Empty string")]
-        [InlineData("abc", false, "Non-numeric")]
-        public void ValidarCpfOuCnpj_RealWorldScenarios_WorksAsExpected(string documento, bool expectedResult, string scenario)
+        [InlineData("12345678909", true)]
+        [InlineData("111.444.777-35", true)]
+        [InlineData("11222333000181", true)]
+        [InlineData("11.222.333/0001-81", true)]
+        [InlineData("12345678900", false)]
+        [InlineData("11111111111", false)]
+        [InlineData("11222333000180", false)]
+        [InlineData("00000000000000", false)]
+        [InlineData("", false)]
+        [InlineData("abc", false)]
+        public void ValidarCpfOuCnpj_RealWorldScenarios_WorksAsExpected(string documento, bool expectedResult)
         {
             // Act
             var result = DocumentoUtils.ValidarCpfOuCnpj(documento);

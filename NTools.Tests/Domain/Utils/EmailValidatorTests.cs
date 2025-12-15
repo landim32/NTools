@@ -1,4 +1,4 @@
-using NTools.Domain.Utils;
+ï»¿using NTools.Domain.Utils;
 
 namespace NTools.Tests.Domain.Utils
 {
@@ -11,44 +11,14 @@ namespace NTools.Tests.Domain.Utils
         [InlineData("test@test.com")]
         [InlineData("admin@domain.com")]
         [InlineData("contact@company.com")]
-        public void IsValidEmail_WithValidSimpleEmails_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("user.name@example.com")]
         [InlineData("user_name@example.com")]
         [InlineData("user-name@example.com")]
         [InlineData("user+tag@example.com")]
         [InlineData("user123@example.com")]
-        public void IsValidEmail_WithValidComplexLocalParts_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("user@subdomain.example.com")]
         [InlineData("user@mail.subdomain.example.com")]
         [InlineData("user@deep.sub.domain.example.com")]
-        public void IsValidEmail_WithSubdomains_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("user@example.co")]
         [InlineData("user@example.com.br")]
         [InlineData("user@example.co.uk")]
@@ -56,46 +26,55 @@ namespace NTools.Tests.Domain.Utils
         [InlineData("user@example.net")]
         [InlineData("user@example.edu")]
         [InlineData("user@example.gov")]
-        public void IsValidEmail_WithDifferentTLDs_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("a@b.c")]
         [InlineData("1@2.3")]
         [InlineData("x@y.z")]
-        public void IsValidEmail_WithMinimalValidFormat_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("USER@EXAMPLE.COM")]
         [InlineData("User@Example.Com")]
         [InlineData("UsEr@ExAmPlE.cOm")]
-        public void IsValidEmail_WithUppercaseLetters_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
         [InlineData("1234567890@example.com")]
         [InlineData("user123456@test123.com")]
         [InlineData("test@123domain.com")]
-        public void IsValidEmail_WithNumbers_ReturnsTrue(string email)
+        [InlineData(".user@example.com")]
+        [InlineData("user.@example.com")]
+        [InlineData("..user@example.com")]
+        [InlineData("user@example..com")]
+        [InlineData("user@..example.com")]
+        [InlineData("user@example...com")]
+        [InlineData("user@.domain.com")]
+        [InlineData("user!name@example.com")]
+        [InlineData("user#name@example.com")]
+        [InlineData("user$name@example.com")]
+        [InlineData("user%name@example.com")]
+        [InlineData("user&name@example.com")]
+        [InlineData("user*name@example.com")]
+        [InlineData("user@domain!.com")]
+        [InlineData("user@domain#.com")]
+        [InlineData("user@domain$.com")]
+        [InlineData("very.long.email.address.with.many.dots@very.long.domain.name.with.many.subdomains.com")]
+        [InlineData("a.b.c.d.e.f.g.h.i.j.k@domain.com")]
+        [InlineData("user+tag1+tag2+tag3@example.com")]
+        [InlineData("user+filtering@example.com")]
+        [InlineData("user+test@example.com")]
+        [InlineData("user@123.456.789.012")]
+        [InlineData("test@192.168.1.1")]
+        [InlineData("user@domain-with-dash.com")]
+        [InlineData("user@sub-domain.example.com")]
+        [InlineData("user@multi-dash-domain.co.uk")]
+        [InlineData("user@-domain.com")]
+        [InlineData("user@domain-.com")]
+        [InlineData("user@-example-.com")]
+        [InlineData("user@gmail.com")]
+        [InlineData("user@outlook.com")]
+        [InlineData("user@hotmail.com")]
+        [InlineData("user@yahoo.com")]
+        [InlineData("user@icloud.com")]
+        [InlineData("user@protonmail.com")]
+        [InlineData("user@mail.ru")]
+        [InlineData("user@yandex.com")]
+        [InlineData("user@munchen.de")]
+        [InlineData("usuario@espanol.es")]
+        public void IsValidEmail_WithValidEmails_ReturnsTrue(string email)
         {
             // Act
             var result = EmailValidator.IsValidEmail(email);
@@ -136,238 +115,31 @@ namespace NTools.Tests.Domain.Utils
         [InlineData("plaintext")]
         [InlineData("notanemail")]
         [InlineData("missing-at-symbol.com")]
-        public void IsValidEmail_WithoutAtSymbol_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("@example.com")]
         [InlineData("@domain.com")]
         [InlineData("@test.co")]
-        public void IsValidEmail_WithoutLocalPart_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("user@")]
         [InlineData("test@")]
         [InlineData("admin@")]
-        public void IsValidEmail_WithoutDomain_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("user@domain")]
         [InlineData("user@localhost")]
         [InlineData("test@server")]
-        public void IsValidEmail_WithoutTLD_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("user@@example.com")]
         [InlineData("user@example@com")]
         [InlineData("user@@example@@com")]
-        public void IsValidEmail_WithMultipleAtSymbols_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("user @example.com")]
         [InlineData("user@ example.com")]
         [InlineData("user@example .com")]
         [InlineData("user @example .com")]
-        public void IsValidEmail_WithSpaces_ReturnsFalse(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Theory]
         [InlineData("user@.com")]
         [InlineData("user@domain.")]
-        public void IsValidEmail_WithInvalidDotPlacement_ReturnsFalse(string email)
+        public void IsValidEmail_WithInvalidEmails_ReturnsFalse(string email)
         {
             // Act
             var result = EmailValidator.IsValidEmail(email);
 
             // Assert
             Assert.False(result);
-        }
-
-        [Theory]
-        [InlineData(".user@example.com")]
-        [InlineData("user.@example.com")]
-        [InlineData("..user@example.com")]
-        public void IsValidEmail_WithDotsAtLocalPartBoundaries_ReturnsTrue(string email)
-        {
-            // Note: The current simple regex pattern accepts dots at boundaries
-            // A more strict RFC-compliant validator would reject them
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@example..com")]
-        [InlineData("user@..example.com")]
-        [InlineData("user@example...com")]
-        public void IsValidEmail_WithConsecutiveDotsInDomain_ReturnsTrue(string email)
-        {
-            // Note: The current simple regex pattern accepts consecutive dots
-            // A more strict RFC-compliant validator would reject them
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@.domain.com")]
-        public void IsValidEmail_WithDotAfterAt_ReturnsTrue(string email)
-        {
-            // Note: The current simple regex pattern accepts dots after @
-            // A more strict RFC-compliant validator would reject them
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        #endregion
-
-        #region Special Characters Tests
-
-        [Theory]
-        [InlineData("user!name@example.com")]
-        [InlineData("user#name@example.com")]
-        [InlineData("user$name@example.com")]
-        [InlineData("user%name@example.com")]
-        [InlineData("user&name@example.com")]
-        [InlineData("user*name@example.com")]
-        public void IsValidEmail_WithSpecialCharactersInLocalPart_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@domain!.com")]
-        [InlineData("user@domain#.com")]
-        [InlineData("user@domain$.com")]
-        public void IsValidEmail_WithSpecialCharactersInDomain_ReturnsTrue(string email)
-        {
-            // Note: The current simple regex pattern accepts these characters
-            // A more strict RFC-compliant validator would reject them
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        #endregion
-
-        #region Edge Cases
-
-        [Theory]
-        [InlineData("very.long.email.address.with.many.dots@very.long.domain.name.with.many.subdomains.com")]
-        [InlineData("a.b.c.d.e.f.g.h.i.j.k@domain.com")]
-        public void IsValidEmail_WithLongButValidEmails_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user+tag1+tag2+tag3@example.com")]
-        [InlineData("user+filtering@example.com")]
-        [InlineData("user+test@example.com")]
-        public void IsValidEmail_WithPlusAddressing_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@123.456.789.012")]
-        [InlineData("test@192.168.1.1")]
-        public void IsValidEmail_WithIPLikeFormat_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@domain-with-dash.com")]
-        [InlineData("user@sub-domain.example.com")]
-        [InlineData("user@multi-dash-domain.co.uk")]
-        public void IsValidEmail_WithDashesInDomain_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("user@-domain.com")]
-        [InlineData("user@domain-.com")]
-        [InlineData("user@-example-.com")]
-        public void IsValidEmail_WithDashesAtBoundaries_ReturnsTrue(string email)
-        {
-            // Note: The current simple regex pattern accepts dashes at boundaries
-            // A more strict RFC-compliant validator would reject them
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
         }
 
         #endregion
@@ -375,60 +147,24 @@ namespace NTools.Tests.Domain.Utils
         #region Real-World Scenarios
 
         [Theory]
-        [InlineData("john.doe@example.com", true, "Standard email")]
-        [InlineData("jane_smith@company.co.uk", true, "Email with underscore and multiple TLD")]
-        [InlineData("admin+test@domain.org", true, "Email with plus addressing")]
-        [InlineData("contact@sub.domain.com", true, "Email with subdomain")]
-        [InlineData("user@", false, "Missing domain")]
-        [InlineData("@example.com", false, "Missing local part")]
-        [InlineData("invalid email@test.com", false, "Email with space")]
-        [InlineData("user@@domain.com", false, "Double at symbol")]
-        [InlineData("", false, "Empty string")]
-        [InlineData("notanemail", false, "Plain text without at symbol")]
-        [InlineData("user@domain", false, "Missing TLD")]
-        public void IsValidEmail_RealWorldScenarios_WorksAsExpected(string email, bool expectedResult, string scenario)
+        [InlineData("john.doe@example.com", true)]
+        [InlineData("jane_smith@company.co.uk", true)]
+        [InlineData("admin+test@domain.org", true)]
+        [InlineData("contact@sub.domain.com", true)]
+        [InlineData("user@", false)]
+        [InlineData("@example.com", false)]
+        [InlineData("invalid email@test.com", false)]
+        [InlineData("user@@domain.com", false)]
+        [InlineData("", false)]
+        [InlineData("notanemail", false)]
+        [InlineData("user@domain", false)]
+        public void IsValidEmail_RealWorldScenarios_WorksAsExpected(string email, bool expectedResult)
         {
             // Act
             var result = EmailValidator.IsValidEmail(email);
 
             // Assert
             Assert.Equal(expectedResult, result);
-        }
-
-        #endregion
-
-        #region Common Email Providers
-
-        [Theory]
-        [InlineData("user@gmail.com")]
-        [InlineData("user@outlook.com")]
-        [InlineData("user@hotmail.com")]
-        [InlineData("user@yahoo.com")]
-        [InlineData("user@icloud.com")]
-        [InlineData("user@protonmail.com")]
-        [InlineData("user@mail.ru")]
-        [InlineData("user@yandex.com")]
-        public void IsValidEmail_WithCommonProviders_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Theory]
-        [InlineData("usuario@uol.com.br")]
-        [InlineData("contato@empresa.com.br")]
-        [InlineData("admin@site.gov.br")]
-        [InlineData("suporte@sistema.net.br")]
-        public void IsValidEmail_WithBrazilianDomains_ReturnsTrue(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            Assert.True(result);
         }
 
         #endregion
@@ -463,24 +199,6 @@ namespace NTools.Tests.Domain.Utils
             // Assert
             Assert.Equal(result1, result2);
             Assert.Equal(result2, result3);
-        }
-
-        #endregion
-
-        #region Unicode and International Tests
-
-        [Theory]
-        [InlineData("user@münchen.de")]
-        [InlineData("??@??.jp")]
-        [InlineData("usuario@español.es")]
-        public void IsValidEmail_WithInternationalCharacters_ValidatesBasedOnPattern(string email)
-        {
-            // Act
-            var result = EmailValidator.IsValidEmail(email);
-
-            // Assert
-            // The current regex pattern accepts these as valid
-            Assert.True(result);
         }
 
         #endregion

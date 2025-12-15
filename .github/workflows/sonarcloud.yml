@@ -58,8 +58,8 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
             /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" \
-            /d:sonar.coverage.exclusions="**/*Tests/**,**/*.cshtml,**/Program.cs,**/Migrations/**" \
-            /d:sonar.exclusions="**/obj/**,**/bin/**,**/*.js,**/*.css,**/wwwroot/**,**/moutsti.presentation/**,**/node_modules/**"
+            /d:sonar.coverage.exclusions="**/*Tests/**,**/NTools.API/**,**/*.cshtml,**/Program.cs,**/Startup.cs,**/Migrations/**" \
+            /d:sonar.exclusions="**/obj/**,**/bin/**,**/*.js,**/*.css,**/wwwroot/**,**/node_modules/**"
       
       - name: Build solution
         run: dotnet build --configuration Release --no-restore

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  ntools-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ntools-api
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:80
+    restart: unless-stopped
+    networks:
+      - ntools-network
+
+networks:
+  ntools-network:
+    driver: bridge

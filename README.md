@@ -272,40 +272,13 @@ NTools/
 └── NTools.Tests/        # Comprehensive test suite
 ```
 
-## Azure Deployment
-
-### Deploy to Azure Container Instances
-```bash
-az container create --resource-group GoblinWarsRecursos --file deployPodsAz.yml
-```
-
-### Check Deployment Status
-```bash
-az container show --resource-group GoblinWarsRecursos --name goblin-wars --output table
-```
-
-### Azure Container Registry Login
-```bash
-az acr login --name registrygw
-```
-
 ## Development
 
 ### Prerequisites
 - .NET 8.0 SDK
 - Docker and Docker Compose
 - MailerSend API account
-- DigitalOcean Spaces (or S3-compatible storage) account
-
-### Running Tests
-```bash
-dotnet test
-```
-
-### Building the Solution
-```bash
-dotnet build
-```
+- DigitalOcean Spaces (or S3-compatible storage) account`
 
 ## License
 

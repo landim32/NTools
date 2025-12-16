@@ -24,4 +24,5 @@ services:
 
 networks:
   emagine-network:
+    name: emagine-network
     driver: bridge

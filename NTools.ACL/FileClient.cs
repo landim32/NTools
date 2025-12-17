@@ -22,7 +22,7 @@ namespace NTools.ACL
 
         public async Task<string> GetFileUrlAsync(string bucketName, string fileName)
         {
-            if (string.IsNullOrWhiteSpace(bucketName))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 return string.Empty;
             }

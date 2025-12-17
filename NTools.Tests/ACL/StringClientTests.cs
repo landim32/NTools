@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NTools.ACL;
@@ -13,6 +14,7 @@ namespace NTools.Tests.ACL
         private readonly NToolSetting _settings;
         private readonly MockHttpMessageHandler _mockHttpHandler;
         private readonly HttpClient _httpClient;
+        private readonly Mock<ILogger<StringClient>> _mockLogger;
 
         public StringClientTests()
         {
@@ -26,6 +28,8 @@ namespace NTools.Tests.ACL
 
             _mockHttpHandler = new MockHttpMessageHandler();
             _httpClient = _mockHttpHandler.ToHttpClient();
+
+            _mockLogger = new Mock<ILogger<StringClient>>();
         }
 
         #region GenerateSlugAsync - Success Tests
@@ -42,7 +46,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -65,7 +69,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -88,7 +92,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -108,7 +112,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "\"\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -129,7 +133,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -153,7 +157,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", "\"test-string\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.GenerateSlugAsync(input);
@@ -177,7 +181,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "\"test\"");
 
-            var client = new StringClient(_httpClient, mockCustomSettings.Object);
+            var client = new StringClient(_httpClient, mockCustomSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -201,7 +205,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -219,7 +223,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -242,7 +246,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expected}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -266,7 +270,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expected}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -286,7 +290,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "\"\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -309,7 +313,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expected}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -329,7 +333,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{input}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -353,7 +357,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", "\"123\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.OnlyNumbersAsync(input);
@@ -377,7 +381,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -395,7 +399,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -417,7 +421,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedString}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateShortUniqueStringAsync();
@@ -439,7 +443,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedString}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateShortUniqueStringAsync();
@@ -462,7 +466,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", "\"uniqueString\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.GenerateShortUniqueStringAsync();
@@ -485,7 +489,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "\"unique\"");
 
-            var client = new StringClient(_httpClient, mockCustomSettings.Object);
+            var client = new StringClient(_httpClient, mockCustomSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateShortUniqueStringAsync();
@@ -508,7 +512,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -525,7 +529,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -542,7 +546,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -565,7 +569,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -585,7 +589,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "\"\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -612,7 +616,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedSlug}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GenerateSlugAsync(input);
@@ -635,7 +639,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expected}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.OnlyNumbersAsync(input);
@@ -665,7 +669,7 @@ namespace NTools.Tests.ACL
                 .When($"{_settings.ApiUrl}/String/generateSlug/{input2}")
                 .Respond("application/json", $"\"{slug2}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.GenerateSlugAsync(input1);
@@ -693,7 +697,7 @@ namespace NTools.Tests.ACL
                 .When($"{_settings.ApiUrl}/String/onlyNumbers/{input2}")
                 .Respond("application/json", $"\"{expected2}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.OnlyNumbersAsync(input1);
@@ -715,7 +719,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", $"\"{expectedString}\"");
 
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.GenerateShortUniqueStringAsync();
@@ -736,7 +740,7 @@ namespace NTools.Tests.ACL
         public void Constructor_WithValidParameters_CreatesInstance()
         {
             // Act
-            var client = new StringClient(_httpClient, _mockSettings.Object);
+            var client = new StringClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Assert
             Assert.NotNull(client);

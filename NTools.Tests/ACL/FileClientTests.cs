@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
@@ -16,6 +17,7 @@ namespace NTools.Tests.ACL
         private readonly NToolSetting _settings;
         private readonly MockHttpMessageHandler _mockHttpHandler;
         private readonly HttpClient _httpClient;
+        private readonly Mock<ILogger<FileClient>> _mockLogger;
 
         public FileClientTests()
         {
@@ -29,6 +31,8 @@ namespace NTools.Tests.ACL
 
             _mockHttpHandler = new MockHttpMessageHandler();
             _httpClient = _mockHttpHandler.ToHttpClient();
+
+            _mockLogger = new Mock<ILogger<FileClient>>();
         }
 
         #region GetFileUrlAsync - Success Tests
@@ -46,7 +50,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -69,7 +73,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucket, file);
@@ -90,7 +94,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(string.Empty));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -111,7 +115,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "null");
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -133,7 +137,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -158,7 +162,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject("https://url.com"));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.GetFileUrlAsync(bucketName, fileName);
@@ -183,7 +187,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject("https://url.com"));
 
-            var client = new FileClient(_httpClient, mockCustomSettings.Object);
+            var client = new FileClient(_httpClient, mockCustomSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -208,7 +212,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -227,7 +231,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -246,7 +250,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -271,7 +275,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedFileName));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -296,7 +300,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(uploadedName));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -320,7 +324,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedFileName));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -341,7 +345,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", "null");
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -366,7 +370,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Post, expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject("uploaded.jpg"));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -393,7 +397,7 @@ namespace NTools.Tests.ACL
                 })
                 .Respond("application/json", JsonConvert.SerializeObject("uploaded.jpg"));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -414,7 +418,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject("uploaded.jpg"));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -439,7 +443,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.BadRequest);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -458,7 +462,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -477,7 +481,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.RequestEntityTooLarge);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -496,7 +500,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -522,7 +526,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucket, file);
@@ -545,7 +549,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedFileName));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -567,7 +571,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -598,7 +602,7 @@ namespace NTools.Tests.ACL
                 .When($"{_settings.ApiUrl}/File/{bucketName}/getFileUrl/{file2}")
                 .Respond("application/json", JsonConvert.SerializeObject(url2));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.GetFileUrlAsync(bucketName, file1);
@@ -624,7 +628,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(uploadedName1));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.UploadFileAsync(bucketName, mockFile1.Object);
@@ -657,7 +661,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedFileName));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.UploadFileAsync(bucketName, mockFile.Object);
@@ -679,7 +683,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedUrl));
 
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.GetFileUrlAsync(bucketName, fileName);
@@ -698,7 +702,7 @@ namespace NTools.Tests.ACL
         public void Constructor_WithValidParameters_CreatesInstance()
         {
             // Act
-            var client = new FileClient(_httpClient, _mockSettings.Object);
+            var client = new FileClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Assert
             Assert.NotNull(client);

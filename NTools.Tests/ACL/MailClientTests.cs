@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace NTools.Tests.ACL
         private readonly NToolSetting _settings;
         private readonly MockHttpMessageHandler _mockHttpHandler;
         private readonly HttpClient _httpClient;
+        private readonly Mock<ILogger<MailClient>> _mockLogger;
 
         public MailClientTests()
         {
@@ -28,6 +30,8 @@ namespace NTools.Tests.ACL
 
             _mockHttpHandler = new MockHttpMessageHandler();
             _httpClient = _mockHttpHandler.ToHttpClient();
+
+            _mockLogger = new Mock<ILogger<MailClient>>();
         }
 
         #region IsValidEmailAsync - Success Tests
@@ -43,7 +47,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -63,7 +67,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -89,7 +93,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedResult));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -113,7 +117,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -137,7 +141,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -161,7 +165,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.IsValidEmailAsync(email);
@@ -185,7 +189,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, mockCustomSettings.Object);
+            var client = new MailClient(_httpClient, mockCustomSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -209,7 +213,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -227,7 +231,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -245,7 +249,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -267,7 +271,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -287,7 +291,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -319,7 +323,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -340,7 +344,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -362,7 +366,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -386,7 +390,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Post, expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.SendmailAsync(mailInfo);
@@ -412,7 +416,7 @@ namespace NTools.Tests.ACL
                 })
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.SendmailAsync(mailInfo);
@@ -438,7 +442,7 @@ namespace NTools.Tests.ACL
                 })
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.SendmailAsync(mailInfo);
@@ -465,7 +469,7 @@ namespace NTools.Tests.ACL
                 })
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.SendmailAsync(mailInfo);
@@ -490,7 +494,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.BadRequest);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -508,7 +512,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -526,7 +530,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -544,7 +548,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond(HttpStatusCode.TooManyRequests);
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -566,7 +570,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -587,7 +591,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -608,7 +612,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -629,7 +633,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -650,7 +654,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -678,7 +682,7 @@ namespace NTools.Tests.ACL
                 .When($"{_settings.ApiUrl}/Mail/isValidEmail/{email2}")
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.IsValidEmailAsync(email1);
@@ -701,7 +705,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.SendmailAsync(mailInfo1);
@@ -732,7 +736,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -770,7 +774,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -793,7 +797,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -817,7 +821,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "true");
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -837,7 +841,7 @@ namespace NTools.Tests.ACL
                 .When(apiUrl)
                 .Respond("application/json", "false");
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.IsValidEmailAsync(email);
@@ -857,7 +861,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", "true");
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -877,7 +881,7 @@ namespace NTools.Tests.ACL
                 .When(HttpMethod.Post, apiUrl)
                 .Respond("application/json", "false");
 
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.SendmailAsync(mailInfo);
@@ -894,7 +898,7 @@ namespace NTools.Tests.ACL
         public void Constructor_WithValidParameters_CreatesInstance()
         {
             // Act
-            var client = new MailClient(_httpClient, _mockSettings.Object);
+            var client = new MailClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Assert
             Assert.NotNull(client);

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
@@ -14,6 +15,7 @@ namespace NTools.Tests.ACL
         private readonly NToolSetting _settings;
         private readonly MockHttpMessageHandler _mockHttpHandler;
         private readonly HttpClient _httpClient;
+        private readonly Mock<ILogger<DocumentClient>> _mockLogger;
 
         public DocumentClientTests()
         {
@@ -27,6 +29,8 @@ namespace NTools.Tests.ACL
 
             _mockHttpHandler = new MockHttpMessageHandler();
             _httpClient = _mockHttpHandler.ToHttpClient();
+
+            _mockLogger = new Mock<ILogger<DocumentClient>>();
         }
 
         #region ValidarCpfOuCnpjAsync - Success Tests
@@ -42,7 +46,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -62,7 +66,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -87,7 +91,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(expectedResult));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(document);
@@ -107,7 +111,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cnpj);
@@ -127,7 +131,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -147,7 +151,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cnpj);
@@ -171,7 +175,7 @@ namespace NTools.Tests.ACL
                 .Expect(HttpMethod.Get, expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             await client.validarCpfOuCnpjAsync(cpf);
@@ -195,7 +199,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, mockCustomSettings.Object);
+            var client = new DocumentClient(_httpClient, mockCustomSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -215,7 +219,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(document);
@@ -239,7 +243,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond(HttpStatusCode.NotFound);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -257,7 +261,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond(HttpStatusCode.InternalServerError);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -275,7 +279,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond(HttpStatusCode.Unauthorized);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -293,7 +297,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond(HttpStatusCode.Forbidden);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -311,7 +315,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond(HttpStatusCode.BadRequest);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act & Assert
             await Assert.ThrowsAsync<HttpRequestException>(() => 
@@ -333,7 +337,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", "true");
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -353,7 +357,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", "false");
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -374,7 +378,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", jsonResponse);
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -398,7 +402,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(document);
@@ -418,7 +422,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(document);
@@ -438,7 +442,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(document);
@@ -465,7 +469,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -488,7 +492,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cnpj);
@@ -510,7 +514,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cpf);
@@ -532,7 +536,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result = await client.validarCpfOuCnpjAsync(cnpj);
@@ -560,7 +564,7 @@ namespace NTools.Tests.ACL
                 .When($"{_settings.ApiUrl}/Document/validarCpfOuCnpj/{cpf2}")
                 .Respond("application/json", JsonConvert.SerializeObject(false));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.validarCpfOuCnpjAsync(cpf1);
@@ -582,7 +586,7 @@ namespace NTools.Tests.ACL
                 .When(expectedUrl)
                 .Respond("application/json", JsonConvert.SerializeObject(true));
 
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Act
             var result1 = await client.validarCpfOuCnpjAsync(cpf);
@@ -601,7 +605,7 @@ namespace NTools.Tests.ACL
         public void Constructor_WithValidParameters_CreatesInstance()
         {
             // Act
-            var client = new DocumentClient(_httpClient, _mockSettings.Object);
+            var client = new DocumentClient(_httpClient, _mockSettings.Object, _mockLogger.Object);
 
             // Assert
             Assert.NotNull(client);

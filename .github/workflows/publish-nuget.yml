@@ -1,0 +1,119 @@
+name: Publish NuGet Packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'NTools.DTO/**'
+      - 'NTools.ACL/**'
+      - '.github/workflows/publish-nuget.yml'
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  CONFIGURATION: Release
+
+jobs:
+  version-and-publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+    
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+        configFilePath: GitVersion.yml
+    
+    - name: Display GitVersion outputs
+      run: |
+        echo "Major: ${{ steps.gitversion.outputs.major }}"
+        echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+        echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+        echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+    
+    - name: Update NTools.DTO version
+      run: |
+        PROJECT_FILE="NTools.DTO/NTools.DTO.csproj"
+        sed -i "s/<Version>.*<\/Version>/<Version>${{ steps.gitversion.outputs.nuGetVersionV2 }}<\/Version>/" $PROJECT_FILE
+        echo "Updated NTools.DTO to version ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+    
+    - name: Update NTools.ACL version
+      run: |
+        PROJECT_FILE="NTools.ACL/NTools.ACL.csproj"
+        sed -i "s/<Version>.*<\/Version>/<Version>${{ steps.gitversion.outputs.nuGetVersionV2 }}<\/Version>/" $PROJECT_FILE
+        echo "Updated NTools.ACL to version ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build NTools.DTO
+      run: dotnet build NTools.DTO/NTools.DTO.csproj --configuration ${{ env.CONFIGURATION }} --no-restore
+    
+    - name: Build NTools.ACL
+      run: dotnet build NTools.ACL/NTools.ACL.csproj --configuration ${{ env.CONFIGURATION }} --no-restore
+    
+    - name: Pack NTools.DTO
+      run: dotnet pack NTools.DTO/NTools.DTO.csproj --configuration ${{ env.CONFIGURATION }} --no-build --output ./artifacts
+    
+    - name: Pack NTools.ACL
+      run: dotnet pack NTools.ACL/NTools.ACL.csproj --configuration ${{ env.CONFIGURATION }} --no-build --output ./artifacts
+    
+    - name: Publish NTools.DTO to NuGet
+      run: dotnet nuget push ./artifacts/NTools.DTO.${{ steps.gitversion.outputs.nuGetVersionV2 }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      continue-on-error: false
+    
+    - name: Publish NTools.ACL to NuGet
+      run: dotnet nuget push ./artifacts/NTools.ACL.${{ steps.gitversion.outputs.nuGetVersionV2 }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      continue-on-error: false
+    
+    - name: Create Git Tag
+      run: |
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        git tag -a "v${{ steps.gitversion.outputs.majorMinorPatch }}" -m "Release version ${{ steps.gitversion.outputs.semVer }}"
+        git push origin "v${{ steps.gitversion.outputs.majorMinorPatch }}"
+      continue-on-error: true
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: ./artifacts/*.nupkg
+        retention-days: 30
+    
+    - name: Summary
+      run: |
+        echo "## ?? NuGet Packages Published" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### NTools.DTO" >> $GITHUB_STEP_SUMMARY
+        echo "- Version: \`${{ steps.gitversion.outputs.nuGetVersionV2 }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Package: [NTools.DTO on NuGet](https://www.nuget.org/packages/NTools.DTO/${{ steps.gitversion.outputs.nuGetVersionV2 }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### NTools.ACL" >> $GITHUB_STEP_SUMMARY
+        echo "- Version: \`${{ steps.gitversion.outputs.nuGetVersionV2 }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Package: [NTools.ACL on NuGet](https://www.nuget.org/packages/NTools.ACL/${{ steps.gitversion.outputs.nuGetVersionV2 }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Version Information" >> $GITHUB_STEP_SUMMARY
+        echo "- SemVer: \`${{ steps.gitversion.outputs.semVer }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Full SemVer: \`${{ steps.gitversion.outputs.fullSemVer }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Commit: \`${{ steps.gitversion.outputs.sha }}\`" >> $GITHUB_STEP_SUMMARY

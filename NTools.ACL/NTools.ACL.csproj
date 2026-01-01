@@ -4,7 +4,22 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- NuGet -->
+    <PackageId>NTools.ACL</PackageId>
+    <Version>0.1.1</Version>
+    <Authors>Rodrigo Landim</Authors>
+    <Company>Emagine</Company>
+    <Description>Anti-Corruption Layer (ACL) clients for NTools API services. Provides strongly-typed HTTP clients for consuming NTools API endpoints including ChatGPT integration, email services, file storage, document validation, and string utilities. Simplifies API consumption with dependency injection and logging support.</Description>
+    <PackageTags>dotnet;nuget;acl;http-client;api-client;chatgpt;openai;mailersend;email;s3;storage;document-validation;utilities;rest-api;typed-client</PackageTags>
+    <RepositoryUrl>https://github.com/landim32/NTools/tree/main/NTools.ACL</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.0" />

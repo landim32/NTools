@@ -17,13 +17,4 @@ namespace NTools.DTO.ChatGPT
         [JsonProperty("max_completion_tokens")]
         public int? MaxCompletionTokens { get; set; }
     }
-
-    public class ChatMessage
-    {
-        [JsonProperty("role")]
-        public string Role { get; set; }
-        
-        [JsonProperty("content")]
-        public string Content { get; set; }
-    }
 }

@@ -94,5 +94,55 @@ namespace NTools.Domain.Services
 
             return JsonConvert.DeserializeObject<ChatGPTResponse>(responseContent);
         }
+
+        public async Task<DallEResponse> GenerateImageAsync(string prompt)
+        {
+            var request = new DallERequest
+            {
+                Prompt = prompt,
+                Model = "dall-e-3",
+                Size = "1024x1024",
+                Quality = "standard",
+                NumberOfImages = 1
+            };
+
+            return await GenerateImageAsync(request);
+        }
+
+        public async Task<DallEResponse> GenerateImageAsync(DallERequest request)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = 
+                new AuthenticationHeaderValue("Bearer", _chatGPTSettings.Value.ApiKey);
+
+            var imageApiUrl = string.IsNullOrEmpty(_chatGPTSettings.Value.ImageApiUrl) 
+                ? "https://api.openai.com/v1/images/generations" 
+                : _chatGPTSettings.Value.ImageApiUrl;
+
+            var jsonContent = new StringContent(
+                JsonConvert.SerializeObject(request, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                }), 
+                Encoding.UTF8, 
+                "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(imageApiUrl, jsonContent);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = JsonConvert.DeserializeObject<ChatGPTErrorResponse>(responseContent);
+                
+                if (errorResponse?.Error != null && !string.IsNullOrEmpty(errorResponse.Error.Message))
+                {
+                    throw new InvalidOperationException(errorResponse.Error.Message);
+                }
+                
+                throw new InvalidOperationException("Unknown error");
+            }
+
+            return JsonConvert.DeserializeObject<DallEResponse>(responseContent);
+        }
     }
 }

@@ -85,5 +85,48 @@ namespace NTools.ACL
 
             return JsonConvert.DeserializeObject<ChatGPTResponse>(json);
         }
+
+        public async Task<DallEResponse> GenerateImageAsync(string prompt)
+        {
+            var url = $"{_ntoolSetting.Value.ApiUrl}/ChatGPT/generateImage";
+            _logger.LogInformation("Generating image with DALL-E via URL: {Url}", url);
+
+            var request = new ChatGPTMessageRequest
+            {
+                Message = prompt
+            };
+
+            var content = new StringContent(
+                JsonConvert.SerializeObject(request), 
+                Encoding.UTF8, 
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            
+            var json = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation("Image generation response received");
+
+            return JsonConvert.DeserializeObject<DallEResponse>(json);
+        }
+
+        public async Task<DallEResponse> GenerateImageAdvancedAsync(DallERequest request)
+        {
+            var url = $"{_ntoolSetting.Value.ApiUrl}/ChatGPT/generateImageAdvanced";
+            _logger.LogInformation("Generating image with DALL-E (advanced) via URL: {Url}", url);
+
+            var content = new StringContent(
+                JsonConvert.SerializeObject(request), 
+                Encoding.UTF8, 
+                "application/json");
+
+            var response = await _httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            
+            var json = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation("Image generation response received");
+
+            return JsonConvert.DeserializeObject<DallEResponse>(json);
+        }
     }
 }

@@ -18,13 +18,13 @@ COPY ["NTools.ACL/", "NTools.ACL/"]
 COPY ["NTools.Domain/", "NTools.Domain/"]
 COPY ["NTools.DTO/", "NTools.DTO/"]
 
-# Build the application
+# Build the application (disable package generation for Docker build)
 WORKDIR "/src/NTools.API"
-RUN dotnet build "NTools.API.csproj" -c Release -o /app/build
+RUN dotnet build "NTools.API.csproj" -c Release -o /app/build /p:GeneratePackageOnBuild=false
 
 # Publish stage
 FROM build AS publish
-RUN dotnet publish "NTools.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "NTools.API.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:GeneratePackageOnBuild=false
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final

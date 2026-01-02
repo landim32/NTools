@@ -10,6 +10,10 @@ services:
       - "5001:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - ChatGPT__ApiKey=${CHATGPT_APIKEY}
+      - ChatGPT__ApiUrl=${CHATGPT_APIURL}
+      - ChatGPT__Model=${CHATGPT_MODEL}
+      - ChatGPT__ImageApiUrl=${CHATGPT_IMAGEAPIURL}
       - MailerSend__MailSender=${MAILERSEND__MAILSENDER}
       - MailerSend__ApiURL=${MAILERSEND__APIURL}
       - MailerSend__ApiToken=${MAILERSEND__APITOKEN}

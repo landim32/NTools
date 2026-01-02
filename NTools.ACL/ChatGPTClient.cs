@@ -42,10 +42,10 @@ namespace NTools.ACL
             var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
             
-            var json = await response.Content.ReadAsStringAsync();
+            var aiResponse = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("ChatGPT message response received");
 
-            return JsonConvert.DeserializeObject<string>(json);
+            return aiResponse;
         }
 
         public async Task<string> SendConversationAsync(List<ChatMessage> messages)
@@ -61,10 +61,10 @@ namespace NTools.ACL
             var response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
             
-            var json = await response.Content.ReadAsStringAsync();
+            var aiResponse = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("ChatGPT conversation response received");
 
-            return JsonConvert.DeserializeObject<string>(json);
+            return aiResponse;
         }
 
         public async Task<ChatGPTResponse> SendRequestAsync(ChatGPTRequest request)
